@@ -80,9 +80,17 @@ class Controller
         $input = $this->input($request);
         $value = $request->attribute($name, $input[$name] ?? null);
 
-        if ($value === null && $parameter->isDefaultValueAvailable())
+        if ($value === null)
         {
-            return $parameter->getDefaultValue();
+            if ($parameter->isDefaultValueAvailable())
+            {
+                return $parameter->getDefaultValue();
+            }
+
+            if ($type instanceof \ReflectionNamedType && $type->allowsNull())
+            {
+                return null;
+            }
         }
 
         return match ($type instanceof \ReflectionNamedType ? $type->getName() : 'mixed') {
