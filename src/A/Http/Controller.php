@@ -55,16 +55,10 @@ class Controller
 
         if (is_array($data) || is_object($data))
         {
-            return new Response(
-                headers: ['Content-Type' => 'application/json; charset=utf-8'],
-                body: json_encode($data, flags: \JSON_THROW_ON_ERROR),
-            );
+            return Response::json_body($data);
         }
 
-        return new Response(
-            headers: ['Content-Type' => 'text/html; charset=utf-8'],
-            body: (string)$data,
-        );
+        return Response::html((string)$data);
     }
 
     protected function resolve(Request $request, \ReflectionParameter $parameter) : mixed
