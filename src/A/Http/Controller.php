@@ -77,7 +77,8 @@ class Controller
         }
 
         $name = $parameter->getName();
-        $value = $request->attribute($name, $request->query[$name] ?? null);
+        $input = $this->input($request);
+        $value = $request->attribute($name, $input[$name] ?? null);
 
         if ($value === null && $parameter->isDefaultValueAvailable())
         {
@@ -91,6 +92,20 @@ class Controller
             'string' => (string)$value,
             default => $value,
         };
+    }
+
+    protected function input(Request $request) : array
+    {
+        $input = $request->query;
+        $type = strtolower((string)$request->headers->value('content-type', ''));
+
+        if ($request->body !== '' && str_starts_with($type, 'application/x-www-form-urlencoded'))
+        {
+            parse_str($request->body, $body);
+            $input = $body + $input;
+        }
+
+        return $input;
     }
 
     protected function template(\ReflectionMethod $method) : ?Template
