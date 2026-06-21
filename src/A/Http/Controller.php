@@ -105,6 +105,16 @@ class Controller
             $input = $body + $input;
         }
 
+        if ($request->body !== '' && str_starts_with($type, 'application/json'))
+        {
+            $body = json_decode($request->body, true);
+
+            if (is_array($body))
+            {
+                $input = $body + $input;
+            }
+        }
+
         return $input;
     }
 
